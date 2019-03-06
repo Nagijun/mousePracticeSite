@@ -3,6 +3,7 @@
 
     let targetPoints = [];
     let hideTPCount = 0;
+    let stageId = '1-1';
 
     // targetPointを5つ生成
     // width,height(20～100)ランダム
@@ -50,6 +51,7 @@
     // TP:targetPoint
     function showTP() {
         let stage = $('#stage');
+        setStageId(stage.data('stage'));
         // stagesKukakuをシャッフル
         let st_kukakus = getStageKukakus(stage);
         st_kukakus.shuffle();
@@ -80,15 +82,26 @@
                     $(this).fadeOut();
                     hideTPCount++;
                     $(this).off('mouseenter');
+                    if(hideTPCount === 5) {
+                        showStageClear(stageId);
+                    }
                 }
             });
         });
     }
 
+    // stageIDを変数にセット
+    function setStageId(stage_id) {
+        stageId = stage_id;
+    }
+
     // ステージクリア画面表示
     // index.htmlの<iflame>にstageClear.htmlを表示
-    function showStageClear() {
-
+    function showStageClear(stage_id) {
+        $('body main iframe', parent.document)
+            .attr('src', '/lessons/lesson1/stageClear.html')
+            .attr('data-id',stage_id);
     }
     showTP();
+    setCountTarget();
 })();

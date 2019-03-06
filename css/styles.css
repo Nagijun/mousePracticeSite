@@ -59,3 +59,7 @@ lessons
     border-radius: 50%;
     background: red;
 }
+
+main.clear div.title-hide {
+    display: none;
+}
