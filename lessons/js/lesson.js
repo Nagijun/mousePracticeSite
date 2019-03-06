@@ -2,6 +2,7 @@
     "use strict";
 
     let targetPoints = [];
+    let hideTPCount = 0;
 
     // targetPointを5つ生成
     // width,height(20～100)ランダム
@@ -16,10 +17,8 @@
                     .css('width', randum+"px")
                     .css('height', randum+"px")
                     .addClass('target-point')
-                    .text(i+1)
-                    .hover(function() {
-                        $(this).fadeOut();
-                    });
+                    .attr('data-id', i+1)
+                    .text(i+1);
             targetPoints.push(tp);
         }
     }
@@ -47,15 +46,14 @@
         return stages;
     }
 
-    // #stageの範囲にtargetPointをランダム表示
-    // stageによって範囲を変える
+    // #stage区画の範囲にtargetPointをランダム表示
     // TP:targetPoint
     function showTP() {
         let stage = $('#stage');
         // stagesKukakuをシャッフル
         let st_kukakus = getStageKukakus(stage);
         st_kukakus.shuffle();
-        console.log(st_kukakus);
+        // ターゲットを5つ生成し、targetPointsに格納
         createRandSizeTarget();
         targetPoints.forEach(function(item,index) {
             // stage区画領域からはみ出さないようにTopとLeftを生成
@@ -69,6 +67,28 @@
             $(item).css('left', thisLeft);
         });
         stage.html(targetPoints);
+    }
+
+    // targetの消えた個数をカウントし、hideTPCountにセット
+    // targetPointによってmouseenterイベントを生成
+    // mouseenterしたら、消える
+    function setCountTarget() {
+        // target全てにhoverイベント実装
+        targetPoints.forEach(function(item,index) {
+            $(item).on({
+                'mouseenter': function() {
+                    $(this).fadeOut();
+                    hideTPCount++;
+                    $(this).off('mouseenter');
+                }
+            });
+        });
+    }
+
+    // ステージクリア画面表示
+    // index.htmlの<iflame>にstageClear.htmlを表示
+    function showStageClear() {
+
     }
     showTP();
 })();
