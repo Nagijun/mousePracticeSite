@@ -20,3 +20,19 @@ Array.prototype.shuffle = function() {
     }
     return this;
 }
+
+// ステージクリア画面表示
+// レッスンが終了したらisEndLesson = true
+// stage_id 例) 1-1
+//(stage_id, isEndLesson)=(str, bool)
+function showStageClear(stage_id, isEndLesson) {
+    if(isEndLesson) {
+        $('body main iframe', parent.document)
+            .attr('src','/lessons/lesson1/lessonClear.html')
+            .attr('data-id',stage_id);
+            return;
+    }
+    $('body main iframe', parent.document)
+        .attr('src', '/lessons/lesson1/stageClear.html')
+        .attr('data-id',stage_id);
+}

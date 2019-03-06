@@ -11,7 +11,7 @@ body {
     margin: 0 auto;
 }
 
-header h1 {
+header h1, header h2 {
     margin: 0;
 }
 
@@ -28,23 +28,23 @@ main #stage iframe {
 lessons
 -----------------*/
 
-#stage {
+.main-stage {
     position: relative;
 }
 
-#stage[data-stage="1-1"] {
+.main-stage[data-stage="1-1"] {
     width: 440px;
     height: 250px;
     margin: 0 auto;
 }
 
-#stage[data-stage="1-2"] {
+.main-stage[data-stage="1-2"] {
     width: 640px;
     height: 410px;
     margin: 0 auto;
 }
 
-#stage[data-stage="1-3"] {
+.main-stage[data-stage="1-3"] {
     width: 740px;
     height: 510px;
     margin: 0 auto;
@@ -60,6 +60,6 @@ lessons
     background: red;
 }
 
-main.clear div.title-hide {
+main.stage-clear div.title-hide {
     display: none;
 }

@@ -4,6 +4,7 @@
     let targetPoints = [];
     let hideTPCount = 0;
     let stageId = '1-1';
+    let isEndLesson = false;
 
     // targetPointを5つ生成
     // width,height(20～100)ランダム
@@ -74,6 +75,7 @@
     // targetの消えた個数をカウントし、hideTPCountにセット
     // targetPointによってmouseenterイベントを生成
     // mouseenterしたら、消える
+    // [注意]isEndLesson部分決め打ちしてます。
     function setCountTarget() {
         // target全てにhoverイベント実装
         targetPoints.forEach(function(item,index) {
@@ -83,7 +85,10 @@
                     hideTPCount++;
                     $(this).off('mouseenter');
                     if(hideTPCount === 5) {
-                        showStageClear(stageId);
+                        if (stageId === '1-3') {
+                            isEndLesson = true;
+                        }
+                        showStageClear(stageId, isEndLesson);
                     }
                 }
             });
@@ -95,13 +100,6 @@
         stageId = stage_id;
     }
 
-    // ステージクリア画面表示
-    // index.htmlの<iflame>にstageClear.htmlを表示
-    function showStageClear(stage_id) {
-        $('body main iframe', parent.document)
-            .attr('src', '/lessons/lesson1/stageClear.html')
-            .attr('data-id',stage_id);
-    }
     showTP();
     setCountTarget();
 })();
