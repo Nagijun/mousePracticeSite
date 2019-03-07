@@ -28,11 +28,12 @@ Array.prototype.shuffle = function() {
 function showStageClear(stage_id, isEndLesson) {
     if(isEndLesson) {
         $('body main iframe', parent.document)
-            .attr('src','/lessons/lesson1/lessonClear.html')
+            .attr('src','/lessons/common/lessonClear.html')
             .attr('data-id',stage_id);
             return;
     }
     $('body main iframe', parent.document)
-        .attr('src', '/lessons/lesson1/stageClear.html')
+        .attr('src', '/lessons/common/stageClear.html')
         .attr('data-id',stage_id);
 }
+

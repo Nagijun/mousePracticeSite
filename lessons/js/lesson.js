@@ -3,8 +3,10 @@
 
     let targetPoints = [];
     let hideTPCount = 0;
-    let stageId = '1-1';
+    let stageId = "";
+    let end_stageid = "";
     let isEndLesson = false;
+    const MAX_TARGET = 5;
 
     // targetPointを5つ生成
     // width,height(20～100)ランダム
@@ -13,7 +15,7 @@
     function createRandSizeTarget() {
         let max_width = 100,min_width = 20;
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < MAX_TARGET; i++) {
             let randum = getRandum(min_width, max_width);
             let tp = $('<div></div>')
                     .css('width', randum+"px")
@@ -53,6 +55,7 @@
     function showTP() {
         let stage = $('#stage');
         setStageId(stage.data('stage'));
+        setEndStageId(stageId);
         // stagesKukakuをシャッフル
         let st_kukakus = getStageKukakus(stage);
         st_kukakus.shuffle();
@@ -75,17 +78,35 @@
     // targetの消えた個数をカウントし、hideTPCountにセット
     // targetPointによってmouseenterイベントを生成
     // mouseenterしたら、消える
-    // [注意]isEndLesson部分決め打ちしてます。
-    function setCountTarget() {
-        // target全てにhoverイベント実装
+    function setEventOfLesson1() {
+        // target全てにmouseenterイベント実装
         targetPoints.forEach(function(item,index) {
             $(item).on({
                 'mouseenter': function() {
                     $(this).fadeOut();
                     hideTPCount++;
                     $(this).off('mouseenter');
-                    if(hideTPCount === 5) {
-                        if (stageId === '1-3') {
+                    if(hideTPCount === MAX_TARGET) {
+                        if (stageId === end_stageid) {
+                            isEndLesson = true;
+                        }
+                        showStageClear(stageId, isEndLesson);
+                    }
+                }
+            });
+        });
+    }
+
+    function setEventOfLesson2() {
+        // target全てにmouseenterイベント実装
+        targetPoints.forEach(function(item,index) {
+            $(item).on({
+                'click': function() {
+                    $(this).fadeOut();
+                    hideTPCount++;
+                    $(this).off('mouseenter');
+                    if(hideTPCount === MAX_TARGET) {
+                        if (stageId === end_stageid) {
                             isEndLesson = true;
                         }
                         showStageClear(stageId, isEndLesson);
@@ -100,6 +121,34 @@
         stageId = stage_id;
     }
 
+    // stageの終了IDを変数にセット
+    function setEndStageId(stage_id) {
+        let end_stages = [];
+        let end_lessons = [];
+        $('nav dl dd', parent.document).each(function() {
+            end_stages.push($(this).children('a').data('endstage'));
+        });
+        end_stages.forEach(function(end_s) {
+            end_lessons.push(end_s.slice(0,1));
+        });
+        end_lessons.forEach(function(end_l) {
+            if (stage_id.slice(0,1) === end_l) {
+                end_stageid = end_stages[parseInt(end_l)-1];
+            }
+        });
+    }
+
+    // 各レッスン事,targetにイベントを設定
+    function setEventTarget() {
+        let no_lesson = stageId.slice(0,1);
+        if (no_lesson === '1') {
+            setEventOfLesson1();
+        }
+        if (no_lesson === '2') {
+            setEventOfLesson2();
+        }
+    }
+
     showTP();
-    setCountTarget();
+    setEventTarget();
 })();
