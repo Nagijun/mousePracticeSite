@@ -7,17 +7,23 @@
     let endStageId = "";    /* 例）1-3 */
     let answerId = "0";     /* レッスン４の時に使う */
     let isEndLesson = false;
+
     const MAX_TARGET = 5;
+    const STAGE_KUKAKU = 8;
 
     //lesson4で使うtargetのカラー情報クラス
-    class TargetColorInfo {
-        constructor(id, color_class, item_key) {
-            this.id = id,
-            this.color_class = color_class;
-            this.item_key = item_key;
-        }
-    }
+    // class TargetColorInfo {
+    //     constructor(id, color_class, item_key) {
+    //         this.id = id,
+    //         this.color_class = color_class;
+    //         this.item_key = item_key;
+    //     }
+    // }
 
+    function getTargetColorInfo(id, color_class, item_key) {
+        let obj = { "id":id, "color_class":color_class, "item_key":item_key };
+        return obj;
+    }
     // targetPointを5つ生成
     // width,height(20～100)ランダム
     // width === height
@@ -48,15 +54,14 @@
         let st_height = Math.floor(stage.height()/2);
         let st_top = 0;
         let st_left = 0;
-        let len = 8;
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < STAGE_KUKAKU; i++) {
             st_left = st_width*i;
-            if (i > (len/2)-1) {
+            if (i > (STAGE_KUKAKU/2)-1) {
                 st_top = st_height;
-                st_left = st_width*(i-(len/2));
+                st_left = st_width*(i-(STAGE_KUKAKU/2));
             }
-            let hash = {top: st_top, left: st_left, width: st_width, height: st_height};
-            stages.push(hash); 
+            let tmp = {top: st_top, left: st_left, width: st_width, height: st_height};
+            stages.push(tmp); 
         }
         return stages;
     }
@@ -166,9 +171,13 @@
         // 1.colorID
         // 2.class名
         // 3.itemsのKey名
-        arr_target_color_info.push(new TargetColorInfo("1","target-back-blue","change-blue"));
-        arr_target_color_info.push(new TargetColorInfo("2","target-back-yellow","change-yellow"));
-        arr_target_color_info.push(new TargetColorInfo("3","target-back-green","change-green"));
+        //IE対応するため、コメント
+        // arr_target_color_info.push(new TargetColorInfo("1","target-back-blue","change-blue"));
+        // arr_target_color_info.push(new TargetColorInfo("2","target-back-yellow","change-yellow"));
+        // arr_target_color_info.push(new TargetColorInfo("3","target-back-green","change-green"));
+        arr_target_color_info.push(getTargetColorInfo("1","target-back-blue","change-blue"));
+        arr_target_color_info.push(getTargetColorInfo("2","target-back-yellow","change-yellow"));
+        arr_target_color_info.push(getTargetColorInfo("3","target-back-green","change-green"));
         $.contextMenu({
             selector: target_select,
             callback: function(key, options) {
