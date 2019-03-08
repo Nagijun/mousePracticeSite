@@ -99,6 +99,11 @@
         targetPoints.forEach(function(item,index) {
             $(item).on({
                 'mouseenter': function() {
+                    // 順番通りhoverしていく処理
+                    let id = $(this).attr('data-id');
+                    if (String(hideTPCount+1) !== id) {
+                        return;
+                    }
                     $(this).fadeOut();
                     hideTPCount++;
                     $(this).off('mouseenter');
@@ -117,6 +122,11 @@
         targetPoints.forEach(function(item,index) {
             $(item).on({
                 'click': function() {
+                    // 順番通りclickしていく処理
+                    let id = $(this).attr('data-id');
+                    if (String(hideTPCount+1) !== id) {
+                        return;
+                    }
                     $(this).fadeOut();
                     hideTPCount++;
                     $(this).off('click');
@@ -135,6 +145,11 @@
         targetPoints.forEach(function(item,index) {
             $(item).on({
                 'dblclick': function() {
+                     // 順番通りdblclickしていく処理
+                     let id = $(this).attr('data-id');
+                     if (String(hideTPCount+1) !== id) {
+                         return;
+                     }
                     $(this).fadeOut();
                     hideTPCount++;
                     $(this).off('dblclick');
