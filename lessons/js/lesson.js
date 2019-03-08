@@ -9,6 +9,7 @@
     let isEndLesson = false;
 
     const MAX_TARGET = 5;
+    const MIN_TARGET = 1;
     const STAGE_KUKAKU = 8;
 
     //lesson4で使うtargetのカラー情報クラス
@@ -34,6 +35,12 @@
 
         for (let i = 0; i < MAX_TARGET; i++) {
             let randum = getRandum(min_width, max_width);
+            // lesson5の時は一個だけ
+            // width:50px;
+            let les_no = stageId.slice(0,1);
+            if(les_no === "5") {
+                randum = 70;
+            }
             let tp = $('<div></div>')
                     .css('width', randum+"px")
                     .css('height', randum+"px")
@@ -41,6 +48,11 @@
                     .attr('data-id', i+1)
                     .text(i+1);
             targetPoints.push(tp);
+        }
+        // lesson5の時だけtarget一つだけにする
+        let les_no = stageId.slice(0,1);
+        if (les_no === "5") {
+            targetPoints.splice(1,MAX_TARGET - 1);
         }
     }
     
@@ -178,6 +190,29 @@
         });
     }
 
+    function setEventOfLesson5() {
+        targetPoints.forEach(function(target,index) {
+            $(target).draggable({
+                containment: "#stage",
+                // ドラッグ開始時に呼ばれる
+                start:function(event, ui) {
+                    console.log("start event start");
+                    console.log(event,ui);
+                },
+                // ドラッグ中に呼ばれる
+                drag:function(event, ui) {
+                    console.log("drag event move");
+                    console.log(event, ui);
+                },
+                // ドラッグ終了時に呼ばれる
+                stop:function(event, ui) {
+                    console.log("drag event stop");
+                    console.log(event, ui);
+                }
+            });
+        });
+    }
+
     // contextmenuの生成
     function createContextMenu(target) {
         let target_select = "div.target-point[data-id="+$(target).data('id')+"]";
@@ -275,6 +310,9 @@
         }
         if (no_lesson === '4') {
             setEventOfLesson4();
+        }
+        if (no_lesson === '5') {
+            setEventOfLesson5();
         }
     }
 
