@@ -25,8 +25,8 @@ Array.prototype.shuffle = function() {
 // レッスンが終了したらisEndLesson = true
 // stage_id 例) 1-1
 //(stage_id, isEndLesson)=(str, bool)
-function showStageClear(stage_id, isEndLesson) {
-    if(isEndLesson) {
+function showStageClear(stage_id, is_end_lesson) {
+    if(is_end_lesson) {
         $('body main iframe', parent.document)
             .attr('src','/lessons/common/lessonClear.html')
             .attr('data-id',stage_id);

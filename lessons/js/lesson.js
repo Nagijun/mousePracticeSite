@@ -3,15 +3,26 @@
 
     let targetPoints = [];
     let hideTPCount = 0;
-    let stageId = "";
-    let end_stageid = "";
+    let stageId = "";       /* 例）1-1 */
+    let endStageId = "";    /* 例）1-3 */
+    let answerId = "0";     /* レッスン４の時に使う */
     let isEndLesson = false;
     const MAX_TARGET = 5;
+
+    //lesson4で使うtargetのカラー情報クラス
+    class TargetColorInfo {
+        constructor(id, color_class, item_key) {
+            this.id = id,
+            this.color_class = color_class;
+            this.item_key = item_key;
+        }
+    }
 
     // targetPointを5つ生成
     // width,height(20～100)ランダム
     // width === height
     // 配列targetPointsに格納
+    // [参考]targetPointもオブジェクト化したほうがいいかも
     function createRandSizeTarget() {
         let max_width = 100,min_width = 20;
 
@@ -63,14 +74,14 @@
         createRandSizeTarget();
         targetPoints.forEach(function(item,index) {
             // stage区画領域からはみ出さないようにTopとLeftを生成
-            let thisTop = getRandum(st_kukakus[index].top, 
+            let this_top = getRandum(st_kukakus[index].top, 
                                     st_kukakus[index].top+st_kukakus[index].height-Math.floor($(item).height())
                                     );
-            let thisLeft = getRandum(st_kukakus[index].left, 
+            let this_left = getRandum(st_kukakus[index].left, 
                                     st_kukakus[index].left+st_kukakus[index].width-Math.floor($(item).width())
                                     );
-            $(item).css('top', thisTop);
-            $(item).css('left', thisLeft);
+            $(item).css('top', this_top);
+            $(item).css('left', this_left);
         });
         stage.html(targetPoints);
     }
@@ -87,7 +98,7 @@
                     hideTPCount++;
                     $(this).off('mouseenter');
                     if(hideTPCount === MAX_TARGET) {
-                        if (stageId === end_stageid) {
+                        if (stageId === endStageId) {
                             isEndLesson = true;
                         }
                         showStageClear(stageId, isEndLesson);
@@ -98,21 +109,109 @@
     }
 
     function setEventOfLesson2() {
-        // target全てにmouseenterイベント実装
         targetPoints.forEach(function(item,index) {
             $(item).on({
                 'click': function() {
                     $(this).fadeOut();
                     hideTPCount++;
-                    $(this).off('mouseenter');
+                    $(this).off('click');
                     if(hideTPCount === MAX_TARGET) {
-                        if (stageId === end_stageid) {
+                        if (stageId === endStageId) {
                             isEndLesson = true;
                         }
                         showStageClear(stageId, isEndLesson);
                     }
                 }
             });
+        });
+    }
+
+    function setEventOfLesson3() {
+        targetPoints.forEach(function(item,index) {
+            $(item).on({
+                'dblclick': function() {
+                    $(this).fadeOut();
+                    hideTPCount++;
+                    $(this).off('dblclick');
+                    if(hideTPCount === MAX_TARGET) {
+                        if (stageId === endStageId) {
+                            isEndLesson = true;
+                        }
+                        showStageClear(stageId, isEndLesson);
+                    }
+                }
+            });
+        });
+    }
+
+    function setEventOfLesson4() {
+        targetPoints.forEach(function(target,index) {
+            // targetに対して、新しいコンテキストメニュー実装
+            createContextMenu(target);
+            // answerIdの初期値をターゲットのdata属性に格納
+            $(target).attr("data-color_id", answerId);
+            $(target).on({
+                'contextmenu': function() {
+                    $(this).off('contextmenu');
+                }
+            });
+        });
+    }
+
+    // contextmenuの生成
+    function createContextMenu(target) {
+        let target_select = "div.target-point[data-id="+$(target).data('id')+"]";
+        let target_all = "div.target-point";
+        let arr_target_color_info = [];
+        // 1.colorID
+        // 2.class名
+        // 3.itemsのKey名
+        arr_target_color_info.push(new TargetColorInfo("1","target-back-blue","change-blue"));
+        arr_target_color_info.push(new TargetColorInfo("2","target-back-yellow","change-yellow"));
+        arr_target_color_info.push(new TargetColorInfo("3","target-back-green","change-green"));
+        $.contextMenu({
+            selector: target_select,
+            callback: function(key, options) {
+                arr_target_color_info.forEach(function(item) {
+                    // targetの背景色変更
+                    if(key === item.item_key) {
+                        $(target_select).addClass(item.color_class)
+                                        .attr('data-color_id', item.id);
+                    } else {
+                        $(target_select).removeClass(item.color_class);
+                    }
+                });
+                // 全てのターゲットを検査
+                /* 例）
+                    レッスン：すべて青色
+                    　　現在：一つだけ青色、他すべて何も変わっていない
+                    青色ターゲットのdata-color_id：1(TargetColorInfo("1","target-back-blue","change-blue"))
+                                               他：0
+                    1.全てのターゲットをループでdata-color_id取得
+                    2.現在のステージ番号が正しいcolor_idとなるので、
+                    3.ステージ番号 === color_id　の時
+                    4.hideTPCount++
+                */
+                $(target_all).each(function() {
+                    let this_id = String($(this).attr('data-color_id'));
+                    if (this_id === stageId.slice(-1)) {
+                        hideTPCount++;
+                    }
+                });
+                if(hideTPCount === MAX_TARGET) {
+                    if (stageId === endStageId) {
+                        isEndLesson = true;
+                    }
+                    showStageClear(stageId, isEndLesson);
+                }
+                // 初期化
+                hideTPCount = 0;
+            },
+            items: {
+                "change-blue": {name: "青色に変更", icon: "fas fa-palette icon-blue"},
+                "change-yellow": {name: "黄色に変更", icon: "fas fa-palette icon-yellow"},
+                "change-green": {name: "緑色に変更", icon: "fas fa-palette icon-green"}
+            }
         });
     }
 
@@ -133,7 +232,7 @@
         });
         end_lessons.forEach(function(end_l) {
             if (stage_id.slice(0,1) === end_l) {
-                end_stageid = end_stages[parseInt(end_l)-1];
+                endStageId = end_stages[parseInt(end_l)-1];
             }
         });
     }
@@ -146,6 +245,12 @@
         }
         if (no_lesson === '2') {
             setEventOfLesson2();
+        }
+        if (no_lesson === '3') {
+            setEventOfLesson3();
+        }
+        if (no_lesson === '4') {
+            setEventOfLesson4();
         }
     }
 
