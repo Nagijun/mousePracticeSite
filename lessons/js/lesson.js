@@ -100,7 +100,7 @@
             $(item).css('top', this_top);
             $(item).css('left', this_left);
         });
-        stage.html(targetPoints);
+        stage.append(targetPoints);
     }
 
     // targetの消えた個数をカウントし、hideTPCountにセット
@@ -192,24 +192,77 @@
 
     function setEventOfLesson5() {
         targetPoints.forEach(function(target,index) {
+            // targetの位置情報削除
+            resetPositionTarget(target);
+            $(target).position({
+                my:"center center",
+                at:"center center"
+            });
+            // 表示がずれるのでtargetの中心位置を変える
+            $(target).css('transform',"translateY(-50%)");
             $(target).draggable({
                 containment: "#stage",
                 // ドラッグ開始時に呼ばれる
                 start:function(event, ui) {
-                    console.log("start event start");
-                    console.log(event,ui);
+                    // "translateY(-50%)"を削除
+                    $(this).css('transform',"");
                 },
                 // ドラッグ中に呼ばれる
                 drag:function(event, ui) {
-                    console.log("drag event move");
-                    console.log(event, ui);
+                    // 橋との当たり判定
+                    if ( isBridgeHit($(this),$('.bridge')) ) {
+                        event.preventDefault();
+                        resetPositionTarget(this);
+                        $(this).css({
+                            top:"50%",
+                            right:"5px",
+                            transform:"translateY(-50%)"
+                        });
+                        console.log($(this).css('top'));
+                    }
                 },
                 // ドラッグ終了時に呼ばれる
                 stop:function(event, ui) {
-                    console.log("drag event stop");
-                    console.log(event, ui);
+                    // targetをゴールに置いたとき
+                    if (stageId === "5-1" && ui.position.left < 30) {
+                        if (stageId === endStageId) isEndLesson = true;
+                        showStageClear(stageId, isEndLesson);
+                    }
                 }
             });
+        });
+    }
+
+    // lesson5：bridgeとターゲットの当たり判定
+    function isBridgeHit(target,bridge) {
+        // targetの中心
+        let t_center_posi = ({
+            top_center:parseInt($(target).css('top')) + (parseInt($(target).css('height'))/2),
+            right_center:parseInt($(target).css('right')) + (parseInt($(target).css('width'))/2),
+            bottom_center:parseInt($(target).css('bottom')) + (parseInt($(target).css('height'))/2),
+            left_center:parseInt($(target).css('left')) + (parseInt($(target).css('width'))/2)
+        });
+        // bridgeのpostion
+        let b_posi = ({
+            top:parseInt($(bridge).css('top')) - (parseInt($(bridge).css('height'))/2),
+            right:parseInt($(bridge).css('right')),
+            bottom:parseInt($(bridge).css('bottom')) + (parseInt($(bridge).css('height'))/2),
+            left:parseInt($(bridge).css('left')),
+        });
+        if ( b_posi.top > t_center_posi.top_center  || b_posi.bottom > t_center_posi.bottom_center ) {
+            return true;
+        }
+        return false;
+    }
+
+    // lesson5:targetのpositionリセット
+    // 引数target:jqueryオブジェクト
+    function resetPositionTarget(target) {
+        $(target).css({
+            top:"",
+            right:"",
+            bottom:"",
+            left:""
         });
     }
 

@@ -148,3 +148,65 @@ lesson4
 .main-stage[data-stage^="4-"] .target-back-green {
     background-color: green;
 }
+
+/*-----------------
+lesson5
+-----------------*/
+.main-stage[data-stage^="5-"] {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.main-stage[data-stage="5-1"] .target-point {
+    transform-origin: center center;
+    top: 50%;
+    right: 5px;
+}
+
+.main-stage[data-stage="5-1"] .bridge {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 80px;
+    transform: translateY(-50%);
+    background: gray;
+}
+
+.main-stage[data-stage="5-1"] .start-position {
+    position: absolute;
+    display: table;
+    top: 50%;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    transform: translateY(-50%);
+    background: blue;
+}
+
+.main-stage[data-stage="5-1"] .start-position p {
+    display: table-cell;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.main-stage[data-stage="5-1"] .end-position {
+    display: table;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    transform: translateY(-50%);
+    background: green;
+}
+
+.main-stage[data-stage="5-1"] .end-position p {
+    display: table-cell;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
