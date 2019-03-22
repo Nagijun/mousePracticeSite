@@ -8,7 +8,7 @@
                 e.preventDefault();
                 let stage_id = "";
                 stage_id = $(this).attr('data-stage');
-                $('#lessonStage').attr('src', '/lessons/lesson'+stage_id.slice(0,1)+'/lesson'+stage_id+'.html');
+                $('#lessonStage').attr('src', './lessons/lesson'+stage_id.slice(0,1)+'/lesson'+stage_id+'.html');
             });
         }
     });

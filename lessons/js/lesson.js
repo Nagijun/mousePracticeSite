@@ -49,11 +49,6 @@
                     .text(i+1);
             targetPoints.push(tp);
         }
-        // lesson5の時だけtarget一つだけにする
-        let les_no = stageId.slice(0,1);
-        if (les_no === "5") {
-            targetPoints.splice(1,MAX_TARGET - 1);
-        }
     }
     
     // stage範囲を8つの区画に割る
@@ -88,7 +83,10 @@
         let st_kukakus = getStageKukakus(stage);
         st_kukakus.shuffle();
         // ターゲットを5つ生成し、targetPointsに格納
-        createRandSizeTarget();
+        // lesson5時以外、生成する
+        if (stageId.slice(0,1) !== '5') {
+            createRandSizeTarget();
+        }
         targetPoints.forEach(function(item,index) {
             // stage区画領域からはみ出さないようにTopとLeftを生成
             let this_top = getRandum(st_kukakus[index].top, 
@@ -191,80 +189,41 @@
     }
 
     function setEventOfLesson5() {
-        targetPoints.forEach(function(target,index) {
-            // targetの位置情報削除
-            resetPositionTarget(target);
-            $(target).position({
-                my:"center center",
-                at:"center center"
-            });
-            // 表示がずれるのでtargetの中心位置を変える
-            $(target).css('transform',"translateY(-50%)");
-            $(target).draggable({
-                containment: "#stage",
-                // ドラッグ開始時に呼ばれる
-                start:function(event, ui) {
-                    // "translateY(-50%)"を削除
-                    $(this).css('transform',"");
+        enchant();
+        let core = new Core($('#stage').width(), $('#stage').height());
+        core.fps = 30;
+        core.onload = function() {
+            let Target = Class.create(Sprite, {
+                initialize: function(x, y) {
+                    Sprite.call(this, 40, 40);  //　継承元クラスの初期化処理
+                    this.x = x;
+                    this.y = y;                
+                    this.image = this.createSurface(40, 40); // サーフェスを画像としてセット
+                    core.rootScene.addChild(this);	// シーンに追加
+
+                    this.on('touchmove', function(e) {
+                        this.x = e.x - 20;
+                        this.y = e.y - 20;
+                    });
                 },
-                // ドラッグ中に呼ばれる
-                drag:function(event, ui) {
-                    // 橋との当たり判定
-                    if ( isBridgeHit($(this),$('.bridge')) ) {
-                        event.preventDefault();
-                        resetPositionTarget(this);
-                        $(this).css({
-                            top:"50%",
-                            right:"5px",
-                            transform:"translateY(-50%)"
-                        });
-                        console.log($(this).css('top'));
-                    }
-                },
-                // ドラッグ終了時に呼ばれる
-                stop:function(event, ui) {
-                    // targetをゴールに置いたとき
-                    if (stageId === "5-1" && ui.position.left < 30) {
-                        if (stageId === endStageId) isEndLesson = true;
-                        showStageClear(stageId, isEndLesson);
-                    }
+                createSurface: function(width, height) {
+                    let surface = new Surface(width, height);
+                    // canvas 描画
+                    surface.context.beginPath();
+                    surface.context.fillStyle = "red";
+                    surface.context.arc(20, 20, 20, 0, Math.PI / 180 * 360);
+                    surface.context.fill();
+                    return surface;
                 }
             });
-        });
+            let target = new Target($('#stage').width()-100,$('#stage').height()/2);
+        };
+        core.start();
     }
 
-    // lesson5：bridgeとターゲットの当たり判定
-    function isBridgeHit(target,bridge) {
-        // targetの中心
-        let t_center_posi = ({
-            top_center:parseInt($(target).css('top')) + (parseInt($(target).css('height'))/2),
-            right_center:parseInt($(target).css('right')) + (parseInt($(target).css('width'))/2),
-            bottom_center:parseInt($(target).css('bottom')) + (parseInt($(target).css('height'))/2),
-            left_center:parseInt($(target).css('left')) + (parseInt($(target).css('width'))/2)
-        });
-        // bridgeのpostion
-        let b_posi = ({
-            top:parseInt($(bridge).css('top')) - (parseInt($(bridge).css('height'))/2),
-            right:parseInt($(bridge).css('right')),
-            bottom:parseInt($(bridge).css('bottom')) + (parseInt($(bridge).css('height'))/2),
-            left:parseInt($(bridge).css('left')),
-        });
-        if ( b_posi.top > t_center_posi.top_center  || b_posi.bottom > t_center_posi.bottom_center ) {
-            return true;
-        }
-        return false;
-    }
-
-    // lesson5:targetのpositionリセット
-    // 引数target:jqueryオブジェクト
-    function resetPositionTarget(target) {
-        $(target).css({
-            top:"",
-            right:"",
-            bottom:"",
-            left:""
-        });
-    }
+    let rand = function(n) {
+        return Math.floor(Math.random() * (n+1));
+    };
 
     // contextmenuの生成
     function createContextMenu(target) {
