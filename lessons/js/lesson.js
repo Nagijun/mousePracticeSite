@@ -204,23 +204,29 @@
                     this.image = this.createSurface(w, h); // サーフェスを画像としてセット
                     
                     let group = new Group();
-                    let target_to_hit = new this.targetToHit(x + w/4, y + h/4, w/2, h/2);
+                    // targetの中心に表示
+                    let target_to_hit = new this.TargetToHit(x + w/4, y + h/4, w/2, h/2);
                     group.addChild(target_to_hit);
                     group.addChild(this);
                     core.rootScene.addChild(group);
+                    
+                    group.addEventListener(Event.TOUCH_START, function(e) {
+                        this.addEventListener(Event.TOUCH_MOVE, onMove);
+                    });
 
-                    // [注意] 基準(x,y)は一番最初に表示された場所が(0,0)
-                    group.addEventListener(Event.TOUCH_MOVE, function(e) {
+                    let onMove = function(e) {
                         this.x = e.x - x - w/2;
                         this.y = e.y - y - h/2;
-                        if (isBridgeOver(e.target.firstChild, bridge1)) {
-                            console.log('bridge Over');
-                            // this.x = $('#stage').width() - x - w;
-                            // this.y = $('#stage').height()/2 - y;
+                        if (isBridgeOver(e.target.firstChild, spBridge) || isStageOver(e.x, e.y, $('#stage').width(), $('#stage').height())) {
+                            console.log('bridge Over '+this.x,this.y);
+                            this.x = 0;
+                            this.y = 0;
+                            this.removeEventListener(Event.TOUCH_MOVE, onMove, false);
                         }
-                    });
+                    };
+
                     group.addEventListener(Event.TOUCH_END, function(e) {
-                        if (isGoal(e.target.firstChild, bridge1.parentNode.lastChild)) {
+                        if (isGoal(e.target.firstChild, spBridge.parentNode.lastChild)) {
                             console.log('goal');
                             if (stageId === endStageId) {
                                 isEndLesson = true;
@@ -238,13 +244,13 @@
                     surface.context.fill();
                     return surface;
                 },
-                targetToHit: Class.create(Sprite, {
+                TargetToHit: Class.create(Sprite, {
                     initialize: function(x, y, w, h){
-                        Entity.call(this, w, h)
-                        this.width = w;
-                        this.height = h;
+                        Entity.call(this, w, h);
                         this.x = x;
                         this.y = y;
+                        this.width = w;
+                        this.height = h;
                         this.backgroundColor = 'blue';
                     }
                 })
@@ -254,32 +260,14 @@
                 initialize: function(x, y, w, h) {
                     Sprite.call(this, w, h);  //　継承元クラスの初期化処理
                     this.x = x;
-                    this.y = y;                
-                    this.image = this.createSurface(0, 0, w, h); // サーフェスを画像としてセット
-
-                    let group = new Group();
-                    let goal = new this.createSprite(x, y, 80, 80);
-                    goal.setSurface(this.createGoalSurface(0, 0, 80, 80));
-                    let otherBridges = [];
-                    for (let i = 0; i < this.stage3Bridges.length; i++) {
-                        otherBridges[i] = new this.createSprite(this.stage3Bridges[i].x, this.stage3Bridges[i].y, this.stage3Bridges[i].width, this.stage3Bridges[i].height);
-                        otherBridges[i].setSurface(this.createSurface(0, 0, this.stage3Bridges[i].width, this.stage3Bridges[i].height));
-                    }
-                    group.addChild(this);
-                    otherBridges.forEach(function(item) {
-                        group.addChild(item);
-                    });
-                    group.addChild(goal);
-                    group.addChild(this.createLabel('ゴール', x, y, 80, 80));
-
-                    core.rootScene.addChild(group);
+                    this.y = y;
                 },
-                createSurface: function(x, y, width, height) {
+                createSurface: function(x, y, width, height, color) {
                     let surface = new Surface(width, height);
                     // canvas 描画
                     surface.context.save();
                     surface.context.beginPath();
-                    surface.context.fillStyle = "gray";
+                    surface.context.fillStyle = color;
                     surface.context.fillRect(x, y, width, height);
                     surface.context.fill();
                     surface.context.restore();
@@ -309,7 +297,7 @@
                     label.width = w;
                     label.height = h;
                     label.moveTo(x, y+h/2-10);
-                    console.log(label.width);
+
                     return label;
                 },
                 createSprite: Class.create(Sprite, {
@@ -324,26 +312,117 @@
                         this.image = surface;
                     }
                 }),
-                stage3Bridges: [{
-                    x: 310,
-                    y: 430,
-                    width: 430,
-                    height: 80
+                draw: function() {
+                    let tmp = this.changeBridgeByStage();
+                    let bridges = tmp.bridges;
+                    let start = tmp.start;
+                    let goal = tmp.goal;
+
+                    let group = new Group();
+                    let spBridges = [];
+                    for (let i = 0; i < bridges.length; i++) {
+                        spBridges[i] = new this.createSprite(bridges[i].x, bridges[i].y, bridges[i].width, bridges[i].height);
+                        spBridges[i].setSurface(this.createSurface(0, 0, bridges[i].width, bridges[i].height, "gray"));
+                    }
+                    group.addChild(this);
+                    spBridges.forEach(function(item) {
+                        group.addChild(item);
+                    });
+                    
+                    let spStart = new this.createSprite(start.x, start.y, start.width, start.height);
+                    spStart.setSurface(this.createSurface(0, 0, start.width, start.height, 'green'));
+                    group.addChild(spStart);
+
+                    group.addChild(this.createLabel('スタート', start.x, start.y, start.width, start.height));
+
+                    let spGoal = new this.createSprite(goal.x, goal.y, goal.width, goal.height);
+                    spGoal.setSurface(this.createGoalSurface(0, 0, goal.width, goal.height));
+
+                    group.addChild(spGoal);
+                    group.addChild(this.createLabel('ゴール', goal.x, goal.y, goal.width, goal.height));
+
+                    core.rootScene.addChild(group);
                 },
-                {
-                    x: 50,
-                    y: 50,
-                    width: 200,
-                    height: 200
-                }]
+                changeBridgeByStage: function() { // ステージ番号によって、描画する橋をdrawメソッドに渡す
+                    let now_stage = stageId.slice(-1);
+                    if (now_stage === '1') {
+                        return this.stage1Bridges();
+                    }
+                    if (now_stage === '2') {
+                        return this.stage2Bridges();
+                    }
+                    if (now_stage === '3') {
+                        return this.stage3Bridges();
+                    }
+                    return null;
+                },
+                stage1Bridges: function() {
+                    let obj = {};
+                    obj.start = { x: 660, y: this.y, width: 80, height: 80 }, // start
+                    obj.bridges = [{ x: this.x, y: this.y, width: 740, height: 80 }],
+                    obj.goal = { x: 0, y: this.y, width: 80, height: 80 } // goal
+                    return obj;
+                },
+                stage2Bridges: function() {
+                    let obj = {};
+                    obj.start =  { x: this.x, y: 430, width: 80, height: 80 }, // start
+                    obj.bridges = [{ x: this.x, y: this.y, width: 80, height: 510 }],
+                    obj.goal = { x: this.x, y: 0, width: 80, height: 80 } // goal
+                    return obj;
+                },
+                stage3Bridges: function() {
+                    let obj = {};
+                    obj.start =  { x: 310, y: 430, width: 80, height: 80 }, // start
+                    obj.bridges = [{ x: this.x, y: this.y, width: 430, height: 80 }
+                                ,{ x: 660, y: 0, width: 80, height: 510 }
+                                ,{ x: 0, y: 0, width: 740, height: 80 }
+                                ,{ x: 0, y: 0, width: 80, height: 250 }
+                                ,{ x: 0, y: 250, width: 400, height: 80 }],
+                    obj.goal = { x: 320, y: 250, width: 80, height: 80 } // goal
+                    return obj;
+                }
             });
 
-            // let bridge1 = new Bridge(0, $('#stage').height()/2, $('#stage').width(), 80);
-            let bridge1 = new Bridge($('#stage').width()/2, 0, 80, $('#stage').height());
-            // let target = new Target($('#stage').width()-75, $('#stage').height()/2+5, 70, 70);
-            let target = new Target($('#stage').width()/2+5, $('#stage').height()-75, 70, 70);
+            let spBridge;
+            // 橋とターゲットを表示
+            // ステージによって位置を帰る
+            function drawBridgeAndTarget() {
+                let now_stage = stageId.slice(-1);
+                if (now_stage === '1') {
+                    spBridge = new Bridge(0, $('#stage').height()/2, $('#stage').width(), 80);
+                    spBridge.draw();
+                    new Target($('#stage').width()-75, $('#stage').height()/2+5, 70, 70);
+                }
+                if (now_stage === '2') {
+                    spBridge = new Bridge(310, 0, 80, 510);
+                    spBridge.draw();
+                    new Target(310+5, 430+5, 70, 70);
+                }
+                if (now_stage === '3') {
+                    spBridge = new Bridge(310, 430, 80, 80);
+                    spBridge.draw();
+                    new Target(310+5, 430+5, 70, 70);
+                }
+            }
+
+            drawBridgeAndTarget();
+            
         };
-        core.start();
+        core.start()
+    }
+
+    // マウスがステージの範囲外に出た時の判定
+    function isStageOver(ex, ey, sw, sh) {
+        let isover = false;
+        // exがステージ外
+        if (ex > (sw - 10) || ex < 10) {
+            isover =  true;
+        }
+        //eyがステージ害
+        if (ey > (sh - 10) || ey < 10) {
+            isover = true;
+        }
+        return isover;
     }
 
     // ターゲットが橋から出たときの判定
