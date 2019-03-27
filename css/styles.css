@@ -53,12 +53,57 @@ header h1, header h2 {
     margin: 0;
 }
 
+header h1 {
+    font-size: 30px;
+}
+
+header h2 {
+    font-size: 20px;
+}
+
 nav {
     width: 248px;
 }
 
-div.title-hide {
-    display: none;
+.container nav dl {
+    margin: 0 20px 0 0;
+    /* background-color: #FF9066; */
+    border-radius: 15px;
+    height: 290px;
+}
+
+.container nav dl dt {
+    margin-bottom: 10px;
+    background: #FF2C19;
+    background: -webkit-linear-gradient(top, #5aade6 0%, #0D3D74 100%);/*グラデーション*/
+    background: linear-gradient(to bottom, #5aade6 0%, #0D3D74 100%);/*グラデーション*/
+    color: white;
+    text-shadow: 1px 1px 1px #000;
+    text-align: center;
+    border-radius: 13px;
+    font-size: 25px;
+}
+
+.container nav dl dd {
+    margin: 5px;
+    border-left: solid 6px #1fa67a;/*左側の線*/
+    border-bottom: solid 2px #dadada;/*下に灰色線*/
+    background-color: #fff;
+    /* border-radius: 10px; */
+}
+
+.container nav dl dd:hover {
+    background-color: #1fa67a;
+    transition:all .5s ease;
+}
+
+.container nav dl dd a {
+    text-decoration: none;
+    color:#000;
+    font-size: 16px;
+    line-height: 40px;
+    margin-left: 10px;
+    
 }
 
 main #stage iframe {
@@ -102,6 +147,41 @@ fontawesome icons
 }
 
 /*-----------------
+stage-clear
+-----------------*/
+main.stage-clear header .title {
+    display: none;
+}
+
+main.stage-clear header .title-hide {
+    display: none;
+}
+
+main.stage-clear header .title-show {
+    display: block;
+}
+
+/*-----------------
+lesson-clear
+-----------------*/
+
+main.lesson-clear div h1 {
+    font-size: 30px;
+}
+
+main.lesson-clear .title {
+    display: none;
+}
+
+main.lesson-clear .title-hide {
+    display: none;
+}
+
+main.lesson-clear .title-show {
+    display: block;
+}
+
+/*-----------------
 lessons
 -----------------*/
 .main-stage {
@@ -138,10 +218,15 @@ lessons
     position: absolute;
     text-align: center;
     display: inline-block;
+    color: white;
     cursor: pointer;
     user-select: none;
     border-radius: 50%;
     background: red;
+}
+
+.target-point p {
+    margin: 0;
 }
 
 /*-----------------

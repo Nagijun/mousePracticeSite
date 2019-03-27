@@ -13,8 +13,10 @@
         titles.each(function(index, title) {
             if ($(title).data('stage') === id_clear_stage) {
                 $(title).removeClass('title-hide');
+                $(title).addClass('title-show');
             } else {
                 $(title).addClass('title-hide');
+                $(title).removeClass('title-show');
             }
         });
         $('#stageClear').text('ステージ'+id_clear_stage+'クリア！');

@@ -8,8 +8,10 @@
     titles.each(function(index, title) {
         if ($(title).data('lesson').toString() === this_lesson) {
             $(title).removeClass('title-hide');
+            $(title).addClass('title-show');
         } else {
             $(title).addClass('title-hide');
+            $(title).removeClass('title-show');
         }
     });
 })();

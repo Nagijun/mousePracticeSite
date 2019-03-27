@@ -45,8 +45,10 @@
                     .css('width', randum+"px")
                     .css('height', randum+"px")
                     .addClass('target-point')
-                    .attr('data-id', i+1)
-                    .text(i+1);
+                    .attr('data-id', i+1);
+            tp.append('<p>'+(i+1)+'</p>')
+              .css('font-size', (randum-10)+'px')
+              .css('line-height', randum+'px');
             targetPoints.push(tp);
         }
     }
@@ -218,7 +220,6 @@
                         this.x = e.x - x - w/2;
                         this.y = e.y - y - h/2;
                         if (isBridgeOver(e.target.firstChild, spBridge) || isStageOver(e.x, e.y, $('#stage').width(), $('#stage').height())) {
-                            console.log('bridge Over '+this.x,this.y);
                             this.x = 0;
                             this.y = 0;
                             this.removeEventListener(Event.TOUCH_MOVE, onMove, false);
@@ -227,7 +228,6 @@
 
                     group.addEventListener(Event.TOUCH_END, function(e) {
                         if (isGoal(e.target.firstChild, spBridge.parentNode.lastChild)) {
-                            console.log('goal');
                             if (stageId === endStageId) {
                                 isEndLesson = true;
                             }
@@ -431,7 +431,6 @@
         bridge.parentNode.childNodes.forEach(function(item) {
             if (target.intersect(item)) {
                 isOver =  false;
-                console.log('bridge in');
             }
         });
         return isOver;
