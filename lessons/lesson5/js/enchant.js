@@ -1,6 +1,6 @@
 /**
  * enchant.js v0.8.3
- * http://enchantjs.com
+ * https://enchantjs.com
  *
  * Copyright UEI Corporation
  * Released under the MIT license.
@@ -5389,8 +5389,8 @@ if (window.Deferred) {
          * @name enchant.Deferred
          * @class
          * <br/>
-         * See: <a href="http://cho45.stfuawsc.com/jsdeferred/">
-         * http://cho45.stfuawsc.com/jsdeferred/</a>
+         * See: <a href="https://cho45.stfuawsc.com/jsdeferred/">
+         * https://cho45.stfuawsc.com/jsdeferred/</a>
          *
          * @example
          * enchant.Deferred
@@ -5953,7 +5953,7 @@ enchant.Sound = window.AudioContext && enchant.ENV.USE_WEBAUDIO ? enchant.WebAud
  * Easing Equations v2.0
  * September 1, 2003
  * (c) 2003 Robert Penner, all rights reserved.
- * This work is subject to the terms in http://www.robertpenner.com/easing_terms_of_use.html.
+ * This work is subject to the terms in https://www.robertpenner.com/easing_terms_of_use.html.
  * ============================================================================================
  */
 
@@ -5968,11 +5968,11 @@ enchant.Sound = window.AudioContext && enchant.ENV.USE_WEBAUDIO ? enchant.WebAud
  * 
  * @return {Number}
  * <br/>
- * See: <a href="http://www.robertpenner.com/easing/">
- * http://www.robertpenner.com/easing/</a>
+ * See: <a href="https://www.robertpenner.com/easing/">
+ * https://www.robertpenner.com/easing/</a>
  * <br/>
- * See: <a href="http://www.robertpenner.com/easing/penner_chapter7_tweening.pdf">
- * http://www.robertpenner.com/easing/penner_chapter7_tweening.pdf</a>
+ * See: <a href="https://www.robertpenner.com/easing/penner_chapter7_tweening.pdf">
+ * https://www.robertpenner.com/easing/penner_chapter7_tweening.pdf</a>
  */
 enchant.Easing = {
     LINEAR: function(t, b, c, d) {

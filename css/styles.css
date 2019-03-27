@@ -98,12 +98,13 @@ nav {
 }
 
 .container nav dl dd a {
+    display: inline-block;
+    width: 100%;
     text-decoration: none;
     color:#000;
     font-size: 16px;
     line-height: 40px;
     margin-left: 10px;
-    
 }
 
 main #stage iframe {
